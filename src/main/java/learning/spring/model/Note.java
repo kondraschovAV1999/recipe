@@ -10,7 +10,7 @@ public class Note {
     private Long id;
     @Lob
     private String notes;
-    @OneToOne
+    @OneToOne(mappedBy = "note")
     private Recipe recipe;
 
     public Long getId() {

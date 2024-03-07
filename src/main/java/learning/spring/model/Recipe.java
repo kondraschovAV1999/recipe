@@ -3,6 +3,7 @@ package learning.spring.model;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 @Entity
 public class Recipe {
@@ -21,8 +22,10 @@ public class Recipe {
     @Lob
     private Byte[] image;
     @OneToOne(cascade = CascadeType.ALL)
-    private Note note;
+    private Note note; // owning side. The foreign key is stored in this table
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    private Set<IngredientDescription> ingredients; // bidirectional mapping
 
     public Long getId() {
         return id;
@@ -102,5 +105,13 @@ public class Recipe {
 
     public void setNote(Note note) {
         this.note = note;
+    }
+
+    public Set<IngredientDescription> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Set<IngredientDescription> ingredients) {
+        this.ingredients = ingredients;
     }
 }
