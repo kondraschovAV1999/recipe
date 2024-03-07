@@ -1,4 +1,4 @@
-package learning.spring;
+package learning.spring.recipe;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

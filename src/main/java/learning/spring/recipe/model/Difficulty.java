@@ -1,4 +1,4 @@
-package learning.spring.model;
+package learning.spring.recipe.model;
 
 public enum Difficulty {
     EASY,MODERATE,HARD

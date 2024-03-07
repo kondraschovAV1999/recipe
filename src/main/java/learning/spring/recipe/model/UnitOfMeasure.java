@@ -1,4 +1,4 @@
-package learning.spring.model;
+package learning.spring.recipe.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
