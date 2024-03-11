@@ -2,6 +2,7 @@ package learning.spring.recipe.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,7 +12,14 @@ public class Category {
     private Long id;
     private String description;
     @ManyToMany(mappedBy = "categories")
-    private Set<Recipe> recipes;
+    private Set<Recipe> recipes = new HashSet<>();
+
+    public Category(String description) {
+        this.description = description;
+    }
+
+    public Category() {
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -36,4 +44,5 @@ public class Category {
     public void setRecipes(Set<Recipe> recipes) {
         this.recipes = recipes;
     }
+
 }
