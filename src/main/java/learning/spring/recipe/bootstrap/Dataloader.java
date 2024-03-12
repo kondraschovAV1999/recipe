@@ -228,7 +228,7 @@ public class Dataloader implements CommandLineRunner {
                                 Set<IngredientDescription> ingredientDescriptions) {
         Recipe recipe = new Recipe();
         recipe.setDescription(description);
-        recipe.setCategories(categories);
+        categories.forEach(recipe::addCategory);
         categoryRepository.saveAll(categories); // HAVE TO DO THIS EXPLICITLY (cascade isn't used)
         recipe.setPrepTime(prepTime);
         recipe.setCookTime(cookTime);
