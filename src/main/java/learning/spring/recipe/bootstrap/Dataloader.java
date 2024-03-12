@@ -2,6 +2,8 @@ package learning.spring.recipe.bootstrap;
 
 import learning.spring.recipe.model.*;
 import learning.spring.recipe.repositories.*;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -13,29 +15,19 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
+@AllArgsConstructor
 @Component
 public class Dataloader implements CommandLineRunner {
-
     private final RecipeRepository recipeRepository;
     private final CategoryRepository categoryRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
     private final IngredientRepository ingredientRepository;
-
-
-    public Dataloader(RecipeRepository recipeRepository, CategoryRepository categoryRepository,
-                      UnitOfMeasureRepository unitOfMeasureRepository,
-                      IngredientRepository ingredientRepository) {
-        this.recipeRepository = recipeRepository;
-        this.categoryRepository = categoryRepository;
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
-        this.ingredientRepository = ingredientRepository;
-    }
-
-
     @Override
     public void run(String... args) throws Exception {
 
         /*---------------------------Guacamole-----------------------------*/
+        log.debug("starting loading guacamole");
         String guacamoleDescription = "Guacamole";
 
         Set<Category> guacamoleCategories = new HashSet<>();
@@ -118,7 +110,10 @@ public class Dataloader implements CommandLineRunner {
                 guacamoleNotes,
                 guacamoleIngredientDescriptions);
 
+        log.debug("finishing loading guacamole");
         /*---------------------Spicy Grilled Chicken Tacos-------------------------*/
+        log.debug("starting loading Spicy Grilled Chicken Tacos");
+
         String sgctDescription = "Spicy Grilled Chicken Tacos";
 
         Set<Category> sgctCategories = new HashSet<>();
@@ -195,21 +190,20 @@ public class Dataloader implements CommandLineRunner {
                 pathSgctImage,
                 sgctNotes,
                 sgctIngredientDescriptions);
+        log.debug("finishing loading Spicy Grilled Chicken Tacos");
     }
 
     private IngredientDescription createIngredientDescription(String ingredientName, String UMO, String amount) {
 
         IngredientDescription ingredientDescription = new IngredientDescription();
-        Ingredient ingredient = new Ingredient();
-        ingredient.setDescription(ingredientName);
+        Ingredient ingredient = new Ingredient(ingredientName);
         ingredientRepository.save(ingredient);
 
         var uomOptional = unitOfMeasureRepository.findByDescription(UMO);
         UnitOfMeasure uom;
 
         if (uomOptional.isEmpty()) {
-            uom = new UnitOfMeasure();
-            uom.setDescription(UMO);
+            uom = new UnitOfMeasure(UMO);
             unitOfMeasureRepository.save(uom);
         } else {
             uom = uomOptional.get();
@@ -246,8 +240,7 @@ public class Dataloader implements CommandLineRunner {
             throw new RuntimeException(e);
         }
 
-        Note note = new Note();
-        note.setNotes(notes);
+        Note note = new Note(notes);
         recipe.setNote(note);
         ingredientDescriptions.forEach(recipe::addIngredientDescription);
         recipe.setIngredients(ingredientDescriptions);
