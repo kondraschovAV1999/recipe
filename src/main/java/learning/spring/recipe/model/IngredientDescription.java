@@ -7,11 +7,11 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 
 @Data
+@EqualsAndHashCode(exclude = {"id", "recipe"})
 @Entity
 public class IngredientDescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Exclude
     private Long id;
     @ManyToOne
     private Ingredient ingredient; // unidirectional mapping
