@@ -1,0 +1,44 @@
+@startuml
+entity Recipe {
+    description String,
+    prepTime Integer,
+    cookTime Integer,
+    servings Integer,
+    source String,
+    url String,
+    directions String,
+    difficulty Difficulty,
+    image Byte[]
+}
+
+entity Category {
+  categoryName String required
+}
+
+entity Ingredient {
+  description String
+}
+
+entity UnitOfMeasure {
+  uom String
+}
+
+entity Note {
+  notes String
+}
+
+enum Difficulty {
+  EASY, MODERATE, HARD
+}
+
+entity ingredientDescription{
+    amount BigDecimal
+}
+
+Recipe "1" <--> "1" Note
+Recipe "1" <--> "*" ingredientDescription
+Recipe "*" <--> "*" Category
+Recipe ---> Difficulty
+ingredientDescription "*" <--> "1" UnitOfMeasure
+ingredientDescription "*" <--> "1" Ingredient
+@enduml
