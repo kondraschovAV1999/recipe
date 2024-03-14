@@ -8,12 +8,16 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 public class UnitOfMeasure {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Exclude
     private Long id;
-    @NonNull private String description;
+    private String description;
+
+    public UnitOfMeasure(String description) {
+        this.description = description;
+    }
 }

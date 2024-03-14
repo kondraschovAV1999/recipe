@@ -5,7 +5,6 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"id","recipe"})
 @Entity
 public class Note {
@@ -13,8 +12,17 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
-    @NonNull private String notes;
+    private String notes;
     @OneToOne(mappedBy = "note")
     @ToString.Exclude
     private Recipe recipe;
+
+    public Note(String notes) {
+        this.notes = notes;
+    }
+
+    public Note(Long id, String notes) {
+        this.id = id;
+        this.notes = notes;
+    }
 }
