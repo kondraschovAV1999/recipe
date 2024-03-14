@@ -18,5 +18,6 @@ public class Category {
     @NonNull
     private String description;
     @ManyToMany(mappedBy = "categories")
+    @ToString.Exclude
     private Set<Recipe> recipes = new HashSet<>();
 }

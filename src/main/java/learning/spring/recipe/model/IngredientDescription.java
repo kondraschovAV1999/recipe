@@ -3,6 +3,7 @@ package learning.spring.recipe.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -18,6 +19,7 @@ public class IngredientDescription {
     @ManyToOne
     private UnitOfMeasure unitOfMeasure; // unidirectional mapping
     @ManyToOne
+    @ToString.Exclude
     private Recipe recipe;
     private BigDecimal amount;
 }

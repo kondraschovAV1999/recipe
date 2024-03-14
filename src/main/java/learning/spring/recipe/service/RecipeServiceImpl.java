@@ -14,12 +14,26 @@ import java.util.List;
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
+
     @Override
     public List<Recipe> getRecipes() {
         log.debug("I'm in the service");
         List<Recipe> recipes = new ArrayList<>();
         recipeRepository.findAll().forEach(recipes::add);
         return recipes;
+    }
+
+    @Override
+    public Recipe findById(Long id) {
+
+        var recipeOptional = recipeRepository.findById(id);
+
+        if (recipeOptional.isEmpty()) {
+            log.warn("Recipe Not Found");
+            throw new RuntimeException("Recipe Not Found");
+        }
+
+        return recipeOptional.get();
     }
 
 }

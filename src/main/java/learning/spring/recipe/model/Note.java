@@ -15,5 +15,6 @@ public class Note {
     @Lob
     @NonNull private String notes;
     @OneToOne(mappedBy = "note")
+    @ToString.Exclude
     private Recipe recipe;
 }
