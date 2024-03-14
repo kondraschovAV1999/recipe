@@ -13,5 +13,5 @@ public class IngredientDescriptionDTO {
     private Long id;
     private IngredientDTO ingredient;
     private String amount;
-    private String umo;
+    private UnitOfMeasureDTO umo;
 }
