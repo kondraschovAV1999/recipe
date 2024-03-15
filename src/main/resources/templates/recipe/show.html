@@ -42,7 +42,7 @@
                                 <h7>Prep Time:</h7>
                             </div>
                             <div class="col-md-3">
-                                <p th:text="${recipe.prepTime.minute + ' min'}">30 min</p>
+                                <p th:text="${recipe.prepTime.toSecondOfDay() / 60} + ' min'">30 min</p>
                             </div>
                             <div class="col-md-3">
                                 <h7>Difficulty:</h7>
@@ -56,7 +56,7 @@
                                 <h7>Cooktime:</h7>
                             </div>
                             <div class="col-md-3">
-                                <p th:text="${recipe.cookTime.minute} + ' min'">30 min</p>
+                                <p th:text="${recipe.cookTime.toSecondOfDay() / 60 } + ' min'">30 min</p>
                             </div>
                             <div class="col-md-3">
                                 <h7>Servings:</h7>
