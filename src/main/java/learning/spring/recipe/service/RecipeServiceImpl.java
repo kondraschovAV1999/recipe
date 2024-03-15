@@ -1,5 +1,8 @@
 package learning.spring.recipe.service;
 
+import jakarta.transaction.Transactional;
+import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.mappers.RecipeMapper;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.repositories.RecipeRepository;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,7 @@ import java.util.List;
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
+    private final RecipeMapper mapper;
 
     @Override
     public List<Recipe> getRecipes() {
@@ -34,6 +38,16 @@ public class RecipeServiceImpl implements RecipeService {
         }
 
         return recipeOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public RecipeDTO saveRecipeDto(RecipeDTO dto) {
+        Recipe detachedRecipe = mapper.fromDto(dto);
+
+        Recipe savedRecipe = recipeRepository.save(detachedRecipe);
+        log.debug("Saved RecipeId: " + savedRecipe.getId());
+        return mapper.toDto(savedRecipe);
     }
 
 }

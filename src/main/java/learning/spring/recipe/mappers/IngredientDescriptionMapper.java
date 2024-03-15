@@ -2,13 +2,17 @@ package learning.spring.recipe.mappers;
 
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.model.IngredientDescription;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {IngredientMapper.class, UnitOfMeasureMapper.class})
+@Mapper(uses = {IngredientMapper.class, UnitOfMeasureMapper.class},
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface IngredientDescriptionMapper {
     IngredientDescriptionMapper INSTANCE = Mappers.getMapper(IngredientDescriptionMapper.class);
 
-    IngredientDescriptionDTO toDto(IngredientDescription IngredientDescription);
+    @Mapping(source="unitOfMeasure", target = "umo")
+    IngredientDescriptionDTO toDto(IngredientDescription ingredientDescription);
+    @InheritInverseConfiguration
     IngredientDescription fromDto(IngredientDescriptionDTO dto);
 }

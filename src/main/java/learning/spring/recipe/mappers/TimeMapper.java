@@ -1,7 +1,9 @@
 package learning.spring.recipe.mappers;
 
-import java.time.LocalTime;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
+@Component
 public class TimeMapper {
 
     public Integer asLocalTime(LocalTime time) {
