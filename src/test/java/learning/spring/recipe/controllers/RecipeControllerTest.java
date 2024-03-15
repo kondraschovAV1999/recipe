@@ -35,13 +35,14 @@ class RecipeControllerTest {
 
     @Test
     void showById() throws Exception {
+        Long id = 1L;
 
         Recipe recipe = new Recipe();
-        recipe.setId(1L);
+        recipe.setId(id);
 
         when(recipeService.findById(anyLong())).thenReturn(recipe);
 
-        mockMvc.perform(get("/recipe/show/1"))
+        mockMvc.perform(get("/recipe/%d/show".formatted(id)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/show"))
                 .andExpect(model().attributeExists("recipe"));
@@ -57,8 +58,9 @@ class RecipeControllerTest {
 
     @Test
     void testPostNewRecipeFrom() throws Exception {
+        Long id = 2L;
         RecipeDTO dto = new RecipeDTO();
-        dto.setId(2L);
+        dto.setId(id);
 
         when(recipeService.saveRecipeDto(any())).thenReturn(dto);
 
@@ -67,6 +69,20 @@ class RecipeControllerTest {
                         .param("id", "")
                         .param("description", "some string"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/recipe/show/2"));
+                .andExpect(view().name("redirect:/recipe/show/%d".formatted(id)));
+    }
+
+    @Test
+    void testGetUpdateView() throws Exception {
+        Long id = 2L;
+        RecipeDTO dto = new RecipeDTO();
+        dto.setId(id);
+
+        when(recipeService.findDtoById(anyLong())).thenReturn(dto);
+
+        mockMvc.perform(get("/recipe/%d/update".formatted(id)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/recipeform"))
+                .andExpect(model().attributeExists("recipe"));
     }
 }

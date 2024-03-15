@@ -19,7 +19,8 @@
             crossorigin="anonymous" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
 </head>
 <body>
-<!--/*@thymesVar id="recipe" type="learning.spring.recipe.model.Recipe"*/-->
+<!--/*@thymesVar id="recipe" type="learning.spring.recipe.dto.RecipeDTO"*/-->
+<!--/*@thymesVar id="ingredientDesc" type="learning.spring.recipe.dto.IngredientDescriptionDTO"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row justify-content-center">
         <div class="col-md-6 col-md-offset-3">
@@ -105,13 +106,12 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul>
-                                        <!--/*@thymesVar id="uom" type="learning.spring.recipe.dto.UnitOfMeasureDTO"*/-->
                                         <li th:remove="all">1 Cup of milk</li>
                                         <li th:remove="all">1 Teaspoon of chocolate</li>
-                                        <li th:each="ingredient : ${recipe.ingredients}"
-                                            th:text="${(ingredient.amount +
-                                        ' ' + ingredient.uom.description +
-                                        ' - ' + ingredient.description)}">1 Teaspoon of Sugar
+                                        <li th:each="ingredientDesc : ${recipe.ingredients}"
+                                            th:text="${ingredientDesc.amount} +
+                                            ' ' + ${ingredientDesc.umo.description} +
+                                        ' - ' + ${ingredientDesc.ingredient.description}">1 Teaspoon of Sugar
                                         </li>
                                     </ul>
                                 </div>

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class RecipeController {
     private final RecipeService recipeService;
 
-    @RequestMapping({"{id}/show/","{id}/show"})
+    @RequestMapping({"{id}/show/", "{id}/show"})
     public String showById(@PathVariable Long id, Model model) {
         model.addAttribute("recipe", recipeService.findById(id));
         return "recipe/show";
@@ -28,9 +28,15 @@ public class RecipeController {
         return "recipe/recipeform";
     }
 
+    @RequestMapping("{id}/update")
+    public String updateRecipe(@PathVariable Long id, Model model) {
+        model.addAttribute("recipe", recipeService.findDtoById(id));
+        return "recipe/recipeform";
+    }
+
     @PostMapping("/")
     public String saveOrUpdate(@ModelAttribute RecipeDTO dto) {
         RecipeDTO savedDto = recipeService.saveRecipeDto(dto);
-        return "redirect:/recipe/show/%d".formatted(savedDto.getId());
+        return "redirect:/recipe/%d/show/".formatted(savedDto.getId());
     }
 }

@@ -50,4 +50,9 @@ public class RecipeServiceImpl implements RecipeService {
         return mapper.toDto(savedRecipe);
     }
 
+    @Override
+    @Transactional
+    public RecipeDTO findDtoById(Long id) {
+        return mapper.toDto(findById(id));
+    }
 }
