@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 public interface IngredientDescriptionMapper {
     IngredientDescriptionMapper INSTANCE = Mappers.getMapper(IngredientDescriptionMapper.class);
 
-    @Mapping(source="unitOfMeasure", target = "umo")
+    @Mapping(source="unitOfMeasure", target = "uom")
     IngredientDescriptionDTO toDto(IngredientDescription ingredientDescription);
     @InheritInverseConfiguration
     IngredientDescription fromDto(IngredientDescriptionDTO dto);

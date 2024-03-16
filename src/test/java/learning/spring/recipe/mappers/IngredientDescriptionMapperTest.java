@@ -44,7 +44,7 @@ class IngredientDescriptionMapperTest {
         // Then
         assertEquals(ingredientDescription.getId(), dto.getId());
         assertEquals(ingredient.getId(), dto.getIngredient().getId());
-        assertEquals(unitOfMeasure.getId(), dto.getUmo().getId());
+        assertEquals(unitOfMeasure.getId(), dto.getUom().getId());
 
         assertEquals(ingredientDescription.getAmount(), new BigDecimal(dto.getAmount()));
     }
@@ -68,7 +68,7 @@ class IngredientDescriptionMapperTest {
         dto.setId(1L);
         dto.setAmount("10");
         dto.setIngredient(ingredientDTO);
-        dto.setUmo(unitOfMeasureDTO);
+        dto.setUom(unitOfMeasureDTO);
 
         // When
         IngredientDescription ingredientDescription = mapper.fromDto(dto);
@@ -77,7 +77,7 @@ class IngredientDescriptionMapperTest {
         assertEquals(dto.getId(), ingredientDescription.getId());
         assertEquals(new BigDecimal(dto.getAmount()), ingredientDescription.getAmount());
         assertEquals(dto.getIngredient().getId(), ingredientDescription.getIngredient().getId());
-        assertEquals(dto.getUmo().getId(), ingredientDescription.getUnitOfMeasure().getId());
+        assertEquals(dto.getUom().getId(), ingredientDescription.getUnitOfMeasure().getId());
     }
 
     @Test

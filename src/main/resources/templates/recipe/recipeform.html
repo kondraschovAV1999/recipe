@@ -111,7 +111,7 @@
                                         <li th:remove="all">1 Teaspoon of chocolate</li>
                                         <li th:each="ingredientDesc : ${recipe.ingredients}"
                                             th:text="${ingredientDesc.amount} +
-                                            ' ' + ${ingredientDesc.umo.description} +
+                                            ' ' + ${ingredientDesc.uom.description} +
                                         ' - ' + ${ingredientDesc.ingredient.description}">1 Teaspoon of Sugar
                                         </li>
 

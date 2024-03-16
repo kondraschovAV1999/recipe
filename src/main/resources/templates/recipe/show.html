@@ -85,7 +85,15 @@
                 </div>
                 <div class="card card-primary border border-primary" style="margin: 20px 0;">
                     <div class="card-header bg-primary text-light">
-                        <h7 class="card-title">Ingredients</h7>
+                        <div class="row justify-content-between">
+                            <div class="col-auto">
+                                <h7 class="card-title">Ingredients</h7>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-light btn-sm" href="#"
+                                   th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row justify-content-center">
@@ -169,6 +177,16 @@
 <style>
     h7 {
         font-weight: bold;
+
+    }
+
+    .btn-light:hover {
+        background-color: white;
+        color: black; /* Optionally change text color */
+    }
+
+    .btn-light {
+        background-color: white;
     }
 </style>
 </html>
