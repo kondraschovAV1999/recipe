@@ -26,6 +26,7 @@
         <div class="col-md-6 col-md-offset-3">
             <form th:object="${recipe}" th:action="@{/recipe/}" method="post">
                 <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{note.id}"/>
                 <div class="panel-group">
                     <div class="card card-primary border border-primary" style="margin: 20px 0">
                         <div class="card-header bg-primary text-light">
@@ -113,6 +114,7 @@
                                             ' ' + ${ingredientDesc.umo.description} +
                                         ' - ' + ${ingredientDesc.ingredient.description}">1 Teaspoon of Sugar
                                         </li>
+
                                     </ul>
                                 </div>
                             </div>

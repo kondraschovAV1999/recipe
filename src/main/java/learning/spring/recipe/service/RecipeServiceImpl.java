@@ -55,4 +55,9 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeDTO findDtoById(Long id) {
         return mapper.toDto(findById(id));
     }
+
+    @Override
+    public void deleteById(Long id) {
+        recipeRepository.deleteById(id);
+    }
 }

@@ -45,7 +45,7 @@ class RecipeServiceImplTest {
     }
 
     @Test
-    void getRecipeById(){
+    void getRecipeById() {
         Recipe recipe = new Recipe();
         recipe.setId(ID);
         var recipeOptional = Optional.of(recipe);
@@ -55,6 +55,18 @@ class RecipeServiceImplTest {
 
         assertNotNull(recipeReturned, "Null recipe returned");
         verify(recipeRepository).findById(anyLong());
+    }
+
+    @Test
+    void testDeleteById() {
+        //given
+        Long id = 2L;
+
+        //when
+        recipeService.deleteById(id);
+
+        //then
+        verify(recipeRepository).deleteById(anyLong());
     }
 
 }
