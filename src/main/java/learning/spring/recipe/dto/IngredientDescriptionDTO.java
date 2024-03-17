@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class IngredientDescriptionDTO {
     private Long id;
+    private Long recipeId;
     private IngredientDTO ingredient;
     private String amount;
     private UnitOfMeasureDTO uom;

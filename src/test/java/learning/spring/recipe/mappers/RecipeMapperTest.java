@@ -5,8 +5,12 @@ import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.NoteDTO;
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.model.*;
+import learning.spring.recipe.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -15,6 +19,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(MockitoExtension.class)
 class RecipeMapperTest {
     public static final String DESCRIPTION = "Test Recipe";
     public static final LocalTime PREP_TIME = LocalTime.of(1, 0);
@@ -27,13 +32,16 @@ class RecipeMapperTest {
     public static final String NOTES = "Test Note";
     public static final Difficulty DIFFICULTY = Difficulty.EASY;
     private RecipeMapper mapper;
+    @Mock
+    private RecipeRepository recipeRepository;
 
     @BeforeEach
     void setUp() {
         mapper = new RecipeMapperImpl(
                 new IngredientDescriptionMapperImpl(
                         new IngredientMapperImpl(),
-                        new UnitOfMeasureMapperImpl()),
+                        new UnitOfMeasureMapperImpl(),
+                        new RecipeToIdMapper(recipeRepository)),
                 new NoteMapperImpl(),
                 new TimeMapper(),
                 new CategoryMapperImpl()

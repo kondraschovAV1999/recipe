@@ -6,23 +6,31 @@ import learning.spring.recipe.dto.UnitOfMeasureDTO;
 import learning.spring.recipe.model.Ingredient;
 import learning.spring.recipe.model.IngredientDescription;
 import learning.spring.recipe.model.UnitOfMeasure;
+import learning.spring.recipe.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(MockitoExtension.class)
 class IngredientDescriptionMapperTest {
 
     private IngredientDescriptionMapper mapper;
+    @Mock
+    private RecipeRepository recipeRepository;
 
     @BeforeEach
     void setUp() {
         mapper = new IngredientDescriptionMapperImpl(
                 new IngredientMapperImpl(),
-                new UnitOfMeasureMapperImpl()
+                new UnitOfMeasureMapperImpl(),
+                new RecipeToIdMapper(recipeRepository)
         );
     }
 

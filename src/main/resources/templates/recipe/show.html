@@ -99,19 +99,11 @@
                         <div class="row justify-content-center">
                             <div class="col-md-12">
                                 <ul th:each="ingredientDesc : ${recipe.ingredients}">
-                                    <!--/*@thymesVar id="ingredient" type="learning.spring.recipe.model.Ingredient"*/-->
-                                    <!--/*@thymesVar id="unitOfMeasure" type="learning.spring.recipe.model.UnitOfMeasure"*/-->
-                                    <div th:if="${ingredientDesc.unitOfMeasure.description.equals('Item')}">
-                                        <li th:text="${ingredientDesc.amount}  + ' ' + ${ingredientDesc.ingredient.description}">
-                                            Cup of milk
-                                        </li>
-                                    </div>
-                                    <div th:unless="${ingredientDesc.unitOfMeasure.description.equals('Item')}">
-                                        <li th:text="${ingredientDesc.amount} + ' ' + ${ingredientDesc.unitOfMeasure.description} + ' '
-                                                + ${ingredientDesc.ingredient.description}">
-                                            Cup of milk
-                                        </li>
-                                    </div>
+                                    <li th:text="${ingredientDesc.amount} + ' '
+                                    + (${ingredientDesc.unitOfMeasure.description.equals('Item')} ? '':${ingredientDesc.unitOfMeasure.description} + ' ')
+                                    + ${ingredientDesc.ingredient.description}">
+                                        Cup of milk
+                                    </li>
                                 </ul>
                             </div>
                         </div>
