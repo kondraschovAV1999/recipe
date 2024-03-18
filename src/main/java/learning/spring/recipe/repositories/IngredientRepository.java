@@ -3,5 +3,8 @@ package learning.spring.recipe.repositories;
 import learning.spring.recipe.model.Ingredient;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface IngredientRepository extends CrudRepository<Ingredient, Long> {
+    Optional<Ingredient> findByDescription(String description);
 }

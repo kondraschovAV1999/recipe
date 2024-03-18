@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class RecipeToIdMapper {
     private final RecipeRepository recipeRepository;
 
-    Recipe toRecipe(Long recipeId) {
+    public Recipe toRecipe(Long recipeId) {
         if (recipeId == null) return null;
 
         var recipeOptional = recipeRepository.findById(recipeId);
@@ -19,7 +19,7 @@ public class RecipeToIdMapper {
         return recipeOptional.orElse(null);
     }
 
-    Long toId(Recipe recipe) {
+    public Long toId(Recipe recipe) {
         return recipe != null ? recipe.getId() : null;
     }
 }

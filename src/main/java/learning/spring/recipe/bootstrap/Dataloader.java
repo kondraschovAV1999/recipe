@@ -170,7 +170,7 @@ public class Dataloader implements CommandLineRunner {
         sgctIngredientDescriptions.add(createIngredientDescription(
                 "clove garlic", "Item", "1"));
         sgctIngredientDescriptions.add(createIngredientDescription(
-                "orange zest", "Tablespoon ", "1"));
+                "orange zest", "Tablespoon", "1"));
         sgctIngredientDescriptions.add(createIngredientDescription(
                 "orange juice", "Tablespoon ", "3"));
         sgctIngredientDescriptions.add(createIngredientDescription(
@@ -194,9 +194,9 @@ public class Dataloader implements CommandLineRunner {
     }
 
     private IngredientDescription createIngredientDescription(String ingredientName, String UMO, String amount) {
-
+        UMO = UMO.trim();
         IngredientDescription ingredientDescription = new IngredientDescription();
-        Ingredient ingredient = new Ingredient(ingredientName);
+        Ingredient ingredient = new Ingredient(ingredientName.trim());
         ingredientRepository.save(ingredient);
 
         var uomOptional = unitOfMeasureRepository.findByDescription(UMO);
@@ -221,15 +221,15 @@ public class Dataloader implements CommandLineRunner {
                                 String directions, Difficulty difficulty, Path path, String notes,
                                 Set<IngredientDescription> ingredientDescriptions) {
         Recipe recipe = new Recipe();
-        recipe.setDescription(description);
+        recipe.setDescription(description.trim());
         categories.forEach(recipe::addCategory);
         categoryRepository.saveAll(categories); // HAVE TO DO THIS EXPLICITLY (cascade isn't used)
         recipe.setPrepTime(prepTime);
         recipe.setCookTime(cookTime);
         recipe.setServings(servings);
-        recipe.setUrl(url);
-        recipe.setSource(source);
-        recipe.setDirections(directions);
+        recipe.setUrl(url.trim());
+        recipe.setSource(source.trim());
+        recipe.setDirections(directions.trim());
         recipe.setDifficulty(difficulty);
 
         try {
