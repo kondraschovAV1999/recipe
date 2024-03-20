@@ -43,8 +43,7 @@ public class IngredientControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp() throws Exception {
-//        controller = new IngredientController(recipeService);
+    void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -121,5 +120,26 @@ public class IngredientControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/%d/ingredient/%d/show"
                         .formatted(recipeId, ingredientDescId)));
+    }
+
+    @Test
+    void testNewIngredientForm() throws Exception {
+        //given
+        Long id = 1L;
+        RecipeDTO dto = new RecipeDTO();
+        dto.setId(id);
+
+        //when
+        when(recipeService.findDtoById(anyLong())).thenReturn(dto);
+        when(unitOfMeasureService.listAllUoms()).thenReturn(new HashSet<>());
+
+        //then
+        mockMvc.perform(get("/recipe/%d/ingredient/new".formatted(id)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/ingredient/ingredientform"))
+                .andExpect(model().attributeExists("ingredientDesc"))
+                .andExpect(model().attributeExists("uomList"));
+
+        verify(recipeService).findDtoById(anyLong());
     }
 }

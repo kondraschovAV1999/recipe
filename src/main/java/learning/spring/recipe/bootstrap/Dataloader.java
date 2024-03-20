@@ -23,6 +23,7 @@ public class Dataloader implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
     private final IngredientRepository ingredientRepository;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -195,16 +196,24 @@ public class Dataloader implements CommandLineRunner {
 
     private IngredientDescription createIngredientDescription(String ingredientName, String UMO, String amount) {
         UMO = UMO.trim();
+        ingredientName = ingredientName.trim();
         IngredientDescription ingredientDescription = new IngredientDescription();
-        Ingredient ingredient = new Ingredient(ingredientName.trim());
-        ingredientRepository.save(ingredient);
+
+        var ingredientOptional = ingredientRepository.findByDescription(ingredientName);
+        Ingredient ingredient;
+        if (ingredientOptional.isEmpty()) {
+            ingredient = ingredientRepository.save(new Ingredient(ingredientName));
+        } else {
+            ingredient = ingredientOptional.get();
+        }
+
+        ingredient = ingredientRepository.save(ingredient);
 
         var uomOptional = unitOfMeasureRepository.findByDescription(UMO);
         UnitOfMeasure uom;
 
         if (uomOptional.isEmpty()) {
-            uom = new UnitOfMeasure(UMO);
-            unitOfMeasureRepository.save(uom);
+            uom = unitOfMeasureRepository.save(new UnitOfMeasure(UMO));
         } else {
             uom = uomOptional.get();
         }

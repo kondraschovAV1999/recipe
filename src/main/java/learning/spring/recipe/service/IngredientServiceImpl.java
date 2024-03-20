@@ -26,8 +26,10 @@ public class IngredientServiceImpl implements IngredientService {
         return ingredientDescriptionMapper.toDto(
                 ingredientDescriptionRepository.findByIdAndRecipeId(ingredientId, recipeId)
                         .orElseThrow(() -> {
-                            log.error("Ingredient Not Found by ingredientId:%d and recipeId:%d".formatted(ingredientId, recipeId));
-                            return new RuntimeException("Ingredient Not Found by ingredient and recipe ids");
+                            String message = "Ingredient Not Found by ingredientId:%d and recipeId:%d"
+                                    .formatted(ingredientId, recipeId);
+                            log.error(message);
+                            return new RuntimeException(message);
                         }));
     }
 
@@ -41,29 +43,42 @@ public class IngredientServiceImpl implements IngredientService {
             throw new RuntimeException("Trying to update ingredientDescription but recipeId is null");
         }
 
+        return ingredientDescriptionMapper.toDto(ingredientDescriptionRepository.
+                save(createIngredientDescFromForm(dto)));
+    }
 
-        IngredientDescription ingredientDescription =
-                ingredientDescriptionRepository.findById(dto.getId())
-                        .orElseGet(IngredientDescription::new);
-        IngredientDescription ingredientDescriptionFromDto = ingredientDescriptionMapper.fromDto(dto);
+    @Override
+    @Transactional
+    public IngredientDescription createIngredientDescFromForm(IngredientDescriptionDTO dto) {
 
+        IngredientDescription ingredientDescFromDto = ingredientDescriptionMapper.fromDto(dto);
+
+        IngredientDescription ingredientDescription = dto.getId() == null ?
+                new IngredientDescription() :
+                ingredientDescriptionRepository.findById(dto.getId()).orElseThrow(
+                        () -> {
+                            String message = "IngredientDescription NOT FOUND BY id=%d (recipeId=%d)"
+                                    .formatted(dto.getId(), dto.getRecipeId());
+                            log.error(message);
+                            return new RuntimeException(message);
+                        });
 
         ingredientDescription.setIngredient(
                 ingredientRepository.findByDescription(dto.getIngredient().getDescription().trim())
                         .orElseGet(() -> ingredientRepository.save(
-                                ingredientDescriptionFromDto.getIngredient())
+                                ingredientDescFromDto.getIngredient())
                         ));
 
         ingredientDescription.setUnitOfMeasure(
                 unitOfMeasureRepository.findById(dto.getUom().getId())
                         .orElseThrow(() -> {
-                            log.error("UOM with desc:%s and id:%d NOT FOUND".formatted(dto.getUom().getDescription(), dto.getUom().getId()));
-                            return new RuntimeException("UOM NOT FOUND");
+                            String message = "UOM with desc:%s and id:%d NOT FOUND"
+                                    .formatted(dto.getUom().getDescription(), dto.getUom().getId());
+                            log.error(message);
+                            return new RuntimeException(message);
                         }));
-        ingredientDescription.setAmount(ingredientDescriptionFromDto.getAmount());
-        ingredientDescription.setRecipe(ingredientDescriptionFromDto.getRecipe());
-
-        return ingredientDescriptionMapper.toDto(
-                ingredientDescriptionRepository.save(ingredientDescription));
+        ingredientDescription.setAmount(ingredientDescFromDto.getAmount());
+        ingredientDescription.setRecipe(ingredientDescFromDto.getRecipe());
+        return ingredientDescription;
     }
 }

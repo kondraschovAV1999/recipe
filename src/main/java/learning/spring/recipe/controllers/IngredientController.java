@@ -1,6 +1,9 @@
 package learning.spring.recipe.controllers;
 
+import learning.spring.recipe.dto.IngredientDTO;
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
+import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.dto.UnitOfMeasureDTO;
 import learning.spring.recipe.service.IngredientService;
 import learning.spring.recipe.service.RecipeService;
 import learning.spring.recipe.service.UnitOfMeasureService;
@@ -28,8 +31,8 @@ public class IngredientController {
     }
 
     @GetMapping("ingredient/{ingredientId}/show")
-    public String showRecipeIngredient(@PathVariable Long recipeId,
-                                       @PathVariable Long ingredientId, Model model) {
+    public String showIngredient(@PathVariable Long recipeId,
+                                 @PathVariable Long ingredientId, Model model) {
         model.addAttribute("ingredientDesc",
                 ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
         return "recipe/ingredient/show";
@@ -41,6 +44,8 @@ public class IngredientController {
         model.addAttribute("ingredientDesc",
                 ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
         model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        log.debug("Updating ingredient with id=%d within recipe id=%d"
+                .formatted(ingredientId, recipeId));
 
         return "recipe/ingredient/ingredientform";
     }
@@ -49,10 +54,28 @@ public class IngredientController {
     public String saveOrUpdate(@ModelAttribute IngredientDescriptionDTO dto) {
         IngredientDescriptionDTO savedDto = ingredientService.saveIngredientDto(dto);
 
-        log.debug("saved recipe id:" + savedDto.getRecipeId());
         log.debug("saved ingredient id:" + savedDto.getId());
 
         return "redirect:/recipe/%d/ingredient/%d/show"
                 .formatted(savedDto.getRecipeId(), savedDto.getId());
     }
+
+    @GetMapping("ingredient/new")
+    public String newIngredient(@PathVariable Long recipeId, Model model) {
+
+        RecipeDTO recipeDto = recipeService.findDtoById(recipeId);
+        // todo raise exception if null
+
+        //we must return back parent id for hidden form property
+        IngredientDescriptionDTO ingredientDescriptionDto = new IngredientDescriptionDTO();
+        ingredientDescriptionDto.setRecipeId(recipeId);
+        ingredientDescriptionDto.setUom(new UnitOfMeasureDTO());
+        ingredientDescriptionDto.setIngredient(new IngredientDTO());
+        model.addAttribute("ingredientDesc", ingredientDescriptionDto);
+
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        return "recipe/ingredient/ingredientform";
+
+    }
+
 }

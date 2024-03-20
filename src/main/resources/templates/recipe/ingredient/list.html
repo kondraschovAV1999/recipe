@@ -26,8 +26,17 @@
             <div class="card card-primary border border-primary">
 
                 <div class="card-header bg-primary text-light">
-                    <h7 class="card-title">Ingredients</h7>
+                    <div class="row justify-content-between">
+                        <div class="col-auto">
+                            <h7 class="card-title">Ingredients</h7>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn btn-light btn-sm" href="#"
+                               th:href="@{'/recipe/' + ${recipe.id} + '/ingredient/new'}" role="button">New</a>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-body">
 
                     <div class="table-responsive" th:if="${not #lists.isEmpty(recipe.ingredients)}">
@@ -81,4 +90,19 @@
     </div>
 </div>
 </body>
+<style>
+    h7 {
+        font-weight: bold;
+
+    }
+
+    .btn-light:hover {
+        background-color: white;
+        color: black; /* Optionally change text color */
+    }
+
+    .btn-light {
+        background-color: white;
+    }
+</style>
 </html>

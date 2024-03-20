@@ -1,12 +1,16 @@
 package learning.spring.recipe.controllers;
 
+import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.service.RecipeService;
+import learning.spring.recipe.service.UnitOfMeasureService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RequestMapping("/recipe")
 @Controller
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class RecipeController {
     private final RecipeService recipeService;
+    private final UnitOfMeasureService unitOfMeasureService;
 
     @GetMapping({"{id}/show/", "{id}/show"})
     public String showById(@PathVariable Long id, Model model) {
@@ -22,14 +27,30 @@ public class RecipeController {
     }
 
     @GetMapping("new")
-    public String newRecipe(Model model) {
-        model.addAttribute("recipe", new RecipeDTO());
+    public String newRecipe(Model model,
+                            @ModelAttribute(name = "recipe") RecipeDTO recipe) {
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        return "recipe/recipeform";
+    }
+
+    @PostMapping(value = "/", params = {"addIngredient"})
+    public String addIngredient(@ModelAttribute(name = "recipe") RecipeDTO recipe, Model model) {
+
+        if (recipe != null) {
+            if (recipe.getIngredients() == null) {
+                recipe.setIngredients(new ArrayList<>());
+            }
+            recipe.getIngredients().add(new IngredientDescriptionDTO());
+        }
+
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
         return "recipe/recipeform";
     }
 
     @GetMapping("{id}/update")
     public String updateRecipe(@PathVariable Long id, Model model) {
         model.addAttribute("recipe", recipeService.findDtoById(id));
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
         return "recipe/recipeform";
     }
 

@@ -3,6 +3,7 @@ package learning.spring.recipe.controllers;
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.service.RecipeService;
+import learning.spring.recipe.service.UnitOfMeasureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RecipeControllerTest {
     @Mock
     private RecipeService recipeService;
+    @Mock
+    private UnitOfMeasureService unitOfMeasureService;
     @InjectMocks
     private RecipeController recipeController;
     private MockMvc mockMvc;
@@ -80,10 +85,12 @@ class RecipeControllerTest {
         dto.setId(id);
 
         when(recipeService.findDtoById(anyLong())).thenReturn(dto);
+        when(unitOfMeasureService.listAllUoms()).thenReturn(new HashSet<>());
 
         mockMvc.perform(get("/recipe/%d/update".formatted(id)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/recipeform"))
+                .andExpect(model().attributeExists("uomList"))
                 .andExpect(model().attributeExists("recipe"));
     }
 

@@ -13,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -148,7 +150,7 @@ class RecipeMapperTest {
         dto.setDirections(DIRECTIONS);
         dto.setDifficulty(DIFFICULTY);
         dto.setNote(new NoteDTO(ID, NOTES));
-        Set<IngredientDescriptionDTO> ingredientDTOSet = new HashSet<>();
+        List<IngredientDescriptionDTO> ingredientDTOSet = new ArrayList<>();
         ingredientDTOSet.add(new IngredientDescriptionDTO());
         dto.setIngredients(ingredientDTOSet);
         Set<CategoryDTO> categoryDTOSet = new HashSet<>();

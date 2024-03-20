@@ -99,26 +99,58 @@
                                     <h7 class="card-title">Ingredients</h7>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-light btn-sm" href="#" role="button">Edit</a>
+                                    <button class="btn btn-light btn-sm" type="submit" name="addIngredient">Create
+                                    </button>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <ul>
-                                        <li th:remove="all">1 Cup of milk</li>
-                                        <li th:remove="all">1 Teaspoon of chocolate</li>
-                                        <li th:each="ingredientDesc : ${recipe.ingredients}"
-                                            th:text="${ingredientDesc.amount} +
-                                            ' ' + ${ingredientDesc.uom.description} +
-                                        ' - ' + ${ingredientDesc.ingredient.description}">1 Teaspoon of Sugar
-                                        </li>
 
-                                    </ul>
-                                </div>
                             </div>
                         </div>
+
+                        <table class="table table-hover">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>#</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>UOM</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody th:if="*{ingredients}">
+                            <tr th:each="ingredientDesc, stat : *{ingredients}">
+                                <td th:text="${stat.count}">1</td>
+                                <input type="hidden" class="form-control"
+                                       th:field="*{ingredients[__${stat.index}__].id}"/>
+                                <input type="hidden" class="form-control"
+                                       th:field="*{ingredients[__${stat.index}__].recipeId}"/>
+                                <input type="hidden" class="form-control"
+                                       th:field="*{ingredients[__${stat.index}__].ingredient.id}"/>
+                                <th>
+                                    <input type="text" class="form-control"
+                                           th:field="*{ingredients[__${stat.index}__].ingredient.description}"
+                                    />
+                                <th>
+                                    <input type="number" step="0.25" min="0" class="form-control"
+                                           th:field="*{ingredients[__${stat.index}__].amount}"/>
+                                </th>
+
+                                <th>
+                                    <select class="form-control" th:field="*{ingredients[__${stat.index}__].uom.id}">
+                                        <option th:each="uom : ${uomList}"
+                                                th:value="${uom.id}"
+                                                th:selected="${uom.id.equals(ingredientDesc.uom.id)}"
+                                                th:text="${uom.description}">Each
+                                        </option>
+                                    </select>
+                                </th>
+                                <th>
+                                    <button class="btn btn-light btn" type="submit" name="deleteIngredient"
+                                            th:value="${stat.index}">X
+                                    </button>
+                                </th>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="card card-primary border border-primary" style="margin: 20px 0">
                         <div class="card-header bg-primary text-light">
