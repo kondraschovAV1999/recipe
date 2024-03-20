@@ -1,6 +1,7 @@
 package learning.spring.recipe.service;
 
 import jakarta.transaction.Transactional;
+import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.mappers.RecipeMapper;
 import learning.spring.recipe.model.IngredientDescription;
@@ -72,5 +73,17 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public void deleteById(Long id) {
         recipeRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteIngredient(int index, RecipeDTO recipe) {
+
+        if (recipe != null) {
+            IngredientDescriptionDTO dto = recipe.getIngredients().get(index);
+            if (dto.getId() != null) ingredientService.deleteById(dto.getId());
+            recipe.removeIngredientByIndex(index);
+        } else {
+            log.warn("Trying to delete ingredient from recipe that doesnt exist");
+        }
     }
 }

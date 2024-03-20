@@ -28,4 +28,10 @@ public class RecipeDTO {
     private NoteDTO note;
     private List<IngredientDescriptionDTO> ingredients = new ArrayList<>();
     private Set<CategoryDTO> categories = new HashSet<>();
+
+    public void removeIngredientByIndex(int index) {
+        IngredientDescriptionDTO dto = ingredients.get(index);
+        ingredients.remove(index);
+        dto.setRecipeId(null);
+    }
 }

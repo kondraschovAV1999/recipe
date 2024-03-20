@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,7 +53,8 @@ class IngredientServiceImplTest {
                 mapper,
                 ingredientDescriptionRepository,
                 unitOfMeasureRepository,
-                ingredientRepository
+                ingredientRepository,
+                recipeRepository
         );
     }
 
@@ -143,5 +145,35 @@ class IngredientServiceImplTest {
         verify(unitOfMeasureRepository).findById(anyLong());
         verify(ingredientDescriptionRepository).save(any(IngredientDescription.class));
         verify(recipeRepository).findById(anyLong());
+    }
+
+    @Test
+    void testDeleteByIdAndRecipeId() {
+        //given
+        Long id = 1L;
+        IngredientDescription ingredientDescription = new IngredientDescription();
+        ingredientDescription.setId(id);
+
+        Long recipeId = 2L;
+        Recipe recipe = new Recipe();
+        recipe.setId(recipeId);
+        recipe.addIngredientDescription(ingredientDescription);
+
+
+        when(recipeRepository.findById(anyLong())).thenReturn(
+                Optional.of(recipe));
+        when(ingredientDescriptionRepository.findById(anyLong())).thenReturn(
+                Optional.of(ingredientDescription));
+
+        //when
+        ingredientService.deleteByIdAndRecipeId(id, recipeId);
+
+        //then
+        assertEquals(0, recipe.getIngredients().size());
+        assertNull(ingredientDescription.getRecipe());
+
+        verify(recipeRepository).findById(anyLong());
+        verify(recipeRepository).save(any(Recipe.class));
+        verify(ingredientDescriptionRepository).deleteById(anyLong());
     }
 }

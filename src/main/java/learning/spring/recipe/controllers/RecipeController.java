@@ -1,5 +1,6 @@
 package learning.spring.recipe.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.service.RecipeService;
@@ -42,6 +43,18 @@ public class RecipeController {
             }
             recipe.getIngredients().add(new IngredientDescriptionDTO());
         }
+
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        return "recipe/recipeform";
+    }
+
+    @PostMapping(value = "/", params = {"deleteIngredient"})
+    public String deleteIngredient(@ModelAttribute(name = "recipe") RecipeDTO recipe,
+                                   HttpServletRequest req,
+                                   Model model) {
+        log.debug("Deleting ingredientDesc from the recipe");
+        int index = Integer.parseInt(req.getParameter("deleteIngredient"));
+        recipeService.deleteIngredient(index, recipe);
 
         model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
         return "recipe/recipeform";

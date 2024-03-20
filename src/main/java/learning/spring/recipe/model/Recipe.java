@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
+
 @Data
 @Entity
 public class Recipe {
@@ -63,5 +64,11 @@ public class Recipe {
     public void addIngredientDescription(IngredientDescription ingredientDescription) {
         ingredients.add(ingredientDescription);
         ingredientDescription.setRecipe(this);
+    }
+
+    public void removeIngredientDescription(IngredientDescription ingredientDescription) {
+        ingredients.remove(ingredientDescription);
+//        ingredients.removeIf((i -> i.getId().equals(ingredientDescription.getId())));
+        ingredientDescription.setRecipe(null);
     }
 }

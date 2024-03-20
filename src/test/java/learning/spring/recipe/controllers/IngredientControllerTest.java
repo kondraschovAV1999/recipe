@@ -142,4 +142,20 @@ public class IngredientControllerTest {
 
         verify(recipeService).findDtoById(anyLong());
     }
+
+    @Test
+    void testDeleteIngredient() throws Exception {
+        //given
+        Long recipeId = 1L;
+        Long ingredientId = 1L;
+
+        //then
+        mockMvc.perform(get("/recipe/%d/ingredient/%d/delete"
+                        .formatted(recipeId, ingredientId)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/%d/ingredients"
+                        .formatted(recipeId)));
+
+        verify(ingredientService).deleteByIdAndRecipeId(anyLong(), anyLong());
+    }
 }
