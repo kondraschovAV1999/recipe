@@ -31,7 +31,7 @@ public class Recipe {
     @OneToOne(cascade = CascadeType.ALL)
     private Note note; // owning side. The foreign key is stored in this table
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", orphanRemoval = true)
     private Set<IngredientDescription> ingredients = new HashSet<>(); // bidirectional mapping
 
     @ManyToMany

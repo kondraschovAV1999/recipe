@@ -92,7 +92,6 @@ class RecipeServiceImplTest {
         //then
         assertEquals(0, recipeDto.getIngredients().size());
         assertNull(ingredientDescriptionDto.getRecipeId());
-        verify(ingredientService).deleteById(anyLong());
     }
 
 }
