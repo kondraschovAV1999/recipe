@@ -2,6 +2,7 @@ package learning.spring.recipe.controllers;
 
 import learning.spring.recipe.dto.RecipeDTO;
 import learning.spring.recipe.model.Recipe;
+import learning.spring.recipe.service.ImageService;
 import learning.spring.recipe.service.RecipeService;
 import learning.spring.recipe.service.UnitOfMeasureService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -20,14 +22,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeControllerTest {
     @Mock
     private RecipeService recipeService;
+    @Mock
+    private ImageService imageService;
     @Mock
     private UnitOfMeasureService unitOfMeasureService;
     @InjectMocks
@@ -102,5 +105,29 @@ class RecipeControllerTest {
                 .andExpect(view().name("redirect:/"));
 
         verify(recipeService).deleteById(anyLong());
+    }
+
+    @Test
+    void testUploadImageNewRecipe() throws Exception {
+        Long recipeId = 1L;
+        RecipeDTO dto = new RecipeDTO();
+        dto.setId(recipeId);
+        MockMultipartFile multipartFile =
+                new MockMultipartFile(
+                        "imagefile",
+                        "testing.txt",
+                        "text/plain",
+                        "Spring Framework Guru".getBytes());
+
+        //when
+        imageService.addImageFile(dto, multipartFile);
+
+        //then
+        mockMvc.perform(multipart("/recipe/").file(multipartFile)
+                        .param("addImage",""))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/recipeform"))
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(model().attributeExists("uomList"));
     }
 }

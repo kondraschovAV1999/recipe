@@ -25,6 +25,7 @@ public class RecipeDTO {
     private String url;
     private String directions;
     private Difficulty difficulty;
+    private byte[] image;
     private NoteDTO note;
     private List<IngredientDescriptionDTO> ingredients = new ArrayList<>();
     private Set<CategoryDTO> categories = new HashSet<>();

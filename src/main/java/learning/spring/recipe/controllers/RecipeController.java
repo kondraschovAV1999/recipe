@@ -1,8 +1,8 @@
 package learning.spring.recipe.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.service.ImageService;
 import learning.spring.recipe.service.RecipeService;
 import learning.spring.recipe.service.UnitOfMeasureService;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 public class RecipeController {
     private final RecipeService recipeService;
     private final UnitOfMeasureService unitOfMeasureService;
+    private final ImageService imageService;
 
     @GetMapping({"{id}/show/", "{id}/show"})
     public String showById(@PathVariable Long id, Model model) {
@@ -50,10 +52,9 @@ public class RecipeController {
 
     @PostMapping(value = "/", params = {"deleteIngredient"})
     public String deleteIngredient(@ModelAttribute(name = "recipe") RecipeDTO recipe,
-                                   HttpServletRequest req,
+                                   @RequestParam("deleteIngredient") Integer index,
                                    Model model) {
         log.debug("Deleting ingredientDesc from the recipe");
-        int index = Integer.parseInt(req.getParameter("deleteIngredient"));
         recipeService.deleteIngredient(index, recipe);
 
         model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
@@ -80,4 +81,14 @@ public class RecipeController {
         recipeService.deleteById(id);
         return "redirect:/";
     }
+
+    @PostMapping(value = "/", params = "addImage")
+    public String uploadImageNewRecipe(@ModelAttribute("recipe") RecipeDTO dto,
+                                       @RequestParam("imagefile") MultipartFile file,
+                                       Model model) {
+        imageService.addImageFile(dto, file);
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        return "recipe/recipeform";
+    }
+
 }

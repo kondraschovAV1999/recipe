@@ -24,61 +24,80 @@
             <div class="panel-group">
                 <div class="card card-primary border border-primary" style="margin: 20px 0">
                     <div class="card-header bg-primary text-light">
-                        <h7 class="card-title" th:text="${recipe.description}">Recipe Description Here!</h7>
+                        <div class="row justify-content-between">
+                            <div class="col-auto">
+                                <h7 class="card-title" th:text="${recipe.description}">Recipe Description Here!</h7>
+                            </div>
+
+                            <div class="col-auto">
+                                <a class="btn btn-light btn-sm" href="#"
+                                   th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="card-body">
-                        <div class="row justify-content-center">
-                            <div class="col-md-3">
-                                <h7>Categories:</h7>
-                            </div>
+                        <div class="row g-1">
                             <div class="col-md-9">
-                                <ul th:each="category : ${recipe.categories}">
-                                    <li th:text="${category.description}">tacos</li>
-                                </ul>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h7>Categories:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <ul th:each="category : ${recipe.categories}">
+                                            <li th:text="${category.description}">tacos</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-3">
+                                        <h7>Prep Time:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p th:text="${recipe.prepTime.toSecondOfDay() / 60} + ' min'">30 min</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h7>Difficulty:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p th:text="${recipe.difficulty.getDisplayValue()}">EASY</p>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-3">
+                                        <h7>Cooktime:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p th:text="${recipe.cookTime.toSecondOfDay() / 60 } + ' min'">30 min</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h7>Servings:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p th:text="${recipe.servings}">4</p>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-3">
+                                        <h7>Source:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="#" th:href="${recipe.source}"
+                                           th:text="${recipe.source}">http://www.example.com</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h7>URL:</h7>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="#" th:href="${recipe.url}"
+                                           th:text="${recipe.url}">http://www.example.com</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row justify-content-center">
                             <div class="col-md-3">
-                                <h7>Prep Time:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <p th:text="${recipe.prepTime.toSecondOfDay() / 60} + ' min'">30 min</p>
-                            </div>
-                            <div class="col-md-3">
-                                <h7>Difficulty:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <p th:text="${recipe.difficulty.getDisplayValue()}">EASY</p>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="col-md-3">
-                                <h7>Cooktime:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <p th:text="${recipe.cookTime.toSecondOfDay() / 60 } + ' min'">30 min</p>
-                            </div>
-                            <div class="col-md-3">
-                                <h7>Servings:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <p th:text="${recipe.servings}">4</p>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="col-md-3">
-                                <h7>Source:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <a href="#" th:href="${recipe.source}"
-                                   th:text="${recipe.source}">http://www.example.com</a>
-                            </div>
-                            <div class="col-md-3">
-                                <h7>URL:</h7>
-                            </div>
-                            <div class="col-md-3">
-                                <a href="#" th:href="${recipe.url}"
-                                   th:text="${recipe.url}">http://www.example.com</a>
+                                <img src="../../static/images/guacamole.webp"
+                                     class="img-fluid rounded"
+                                     th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}">
                             </div>
                         </div>
                     </div>
@@ -179,5 +198,9 @@
 
     .btn-light {
         background-color: white;
+    }
+    img {
+        width: auto;
+        height: 200px;
     }
 </style>

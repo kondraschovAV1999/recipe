@@ -108,7 +108,7 @@ public class IngredientServiceImpl implements IngredientService {
 
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(
                 () -> {
-                    String message = "Recipe with id=%d Not Found".formatted(id);
+                    String message = "Recipe with id=%d Not Found".formatted(recipeId);
                     log.error(message);
                     return new RuntimeException(message);
                 }

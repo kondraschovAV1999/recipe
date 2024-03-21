@@ -24,77 +24,102 @@
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row justify-content-center">
         <div class="col-md-6 col-md-offset-3">
-            <form th:object="${recipe}" th:action="@{/recipe/}" method="post">
+            <form th:object="${recipe}" th:action="@{/recipe/}" enctype="multipart/form-data" method="post">
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" th:field="*{note.id}"/>
+                <input type="hidden" th:field="*{image}">
                 <div class="panel-group">
                     <div class="card card-primary border border-primary" style="margin: 20px 0">
+
                         <div class="card-header bg-primary text-light">
-                            <h7 class="card-title">Edit Recipe Information</h7>
+                            <div class="row justify-content-between">
+                                <div class="col-auto">
+                                    <h7 class="card-title">Edit Recipe Information</h7>
+                                </div>
+
+                                <div class="col-auto">
+                                    <label class="control-label">Select File</label>
+                                    <input id="imagefile" name="imagefile" type="file" class="file">
+                                    <button type="submit" class="btn btn-light btn-sm" name="addImage">Upload Image
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 form-group">
-                                    <label>Recipe Description:</label>
-                                    <input type="text" class="form-control" th:field="*{description}"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3 form-group">
-                                    <label>Categories:</label>
-                                </div>
-                                <div class="col-md-9 form-group">
-                                    <div class="radio">
-                                        <label>
-                                            <input type="checkbox" value=""/>
-                                            Cat 1
-                                        </label>
-                                    </div>
-                                    <div class="radio" th:remove="all">
-                                        <label>
-                                            <input type="checkbox" value=""/>
-                                            Cat 2
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3 form-group">
-                                    <label>Prep Time:</label>
-                                    <input type="text" class="form-control" th:field="*{prepTime}"/>
-                                </div>
-                                <div class="col-md-3 form-group">
-                                    <label>Cooktime:</label>
-                                    <input type="text" class="form-control" th:field="*{cookTime}"/>
-                                </div>
-                                <div class="col-md-3 form-group">
-                                    <label>Difficulty:</label>
-                                    <select class="form-control" th:field="*{difficulty}">
-                                        <option th:each="difficultyValue : ${T(learning.spring.recipe.model.Difficulty).values()}"
-                                                th:value="${difficultyValue}"
-                                                th:text="${difficultyValue.getDisplayValue()}"
-                                        >Easy</option>
-                                    </select>
+                            <div class="row g-1">
 
-                                    <select class="form-control" th:remove="all">
-                                        <option>Easy</option>
-                                        <option>Medium</option>
-                                        <option>Hard</option>
-                                    </select>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-auto form-group">
+                                            <label>Recipe Description:</label>
+                                            <input type="text" class="form-control" th:field="*{description}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-auto form-group">
+                                            <label>Categories:</label>
+                                        </div>
+                                        <div class="col-md-9 form-group">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="checkbox" value=""/>
+                                                    Cat 1
+                                                </label>
+                                            </div>
+                                            <div class="radio" th:remove="all">
+                                                <label>
+                                                    <input type="checkbox" value=""/>
+                                                    Cat 2
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-auto form-group">
+                                            <label>Prep Time:</label>
+                                            <input type="text" class="form-control" th:field="*{prepTime}"/>
+                                        </div>
+                                        <div class="col-md-auto form-group">
+                                            <label>Cooktime:</label>
+                                            <input type="text" class="form-control" th:field="*{cookTime}"/>
+                                        </div>
+                                        <div class="col-md-auto form-group">
+                                            <label>Difficulty:</label>
+                                            <select class="form-control" th:field="*{difficulty}">
+                                                <option th:each="difficultyValue : ${T(learning.spring.recipe.model.Difficulty).values()}"
+                                                        th:value="${difficultyValue}"
+                                                        th:text="${difficultyValue.getDisplayValue()}"
+                                                >Easy
+                                                </option>
+                                            </select>
+
+                                            <select class="form-control" th:remove="all">
+                                                <option>Easy</option>
+                                                <option>Medium</option>
+                                                <option>Hard</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-auto form-group">
+                                            <label>Servings:</label>
+                                            <input type="text" class="form-control" th:field="*{servings}"/>
+                                        </div>
+                                        <div class="col-md-auto form-group">
+                                            <label>Source:</label>
+                                            <input type="text" class="form-control" th:field="*{source}"/>
+                                        </div>
+                                        <div class="col-md-auto form-group">
+                                            <label>URL:</label>
+                                            <input type="text" class="form-control" th:field="*{url}"/>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3 form-group">
-                                    <label>Servings:</label>
-                                    <input type="text" class="form-control" th:field="*{servings}"/>
-                                </div>
-                                <div class="col-md-3 form-group">
-                                    <label>Source:</label>
-                                    <input type="text" class="form-control" th:field="*{source}"/>
-                                </div>
-                                <div class="col-md-3 form-group">
-                                    <label>URL:</label>
-                                    <input type="text" class="form-control" th:field="*{url}"/>
+                                <div th:if="${recipe.id!=null}" class="col-md-3">
+                                    <img class="img-fluid rounded" id="image"
+                                         src="../../static/images/guacamole.webp"
+                                         th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -204,5 +229,9 @@
         background-color: white;
     }
 
+    img {
+        width: auto;
+        height: 200px;
+    }
 </style>
 </html>
