@@ -1,6 +1,7 @@
 package learning.spring.recipe.controllers;
 
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.service.ImageService;
 import learning.spring.recipe.service.RecipeService;
@@ -20,8 +21,7 @@ import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -82,6 +82,16 @@ class RecipeControllerTest {
     }
 
     @Test
+    void testGetRecipeNotFound() throws Exception {
+
+        when(recipeService.findById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/%d/show".formatted(1)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void testGetUpdateView() throws Exception {
         Long id = 2L;
         RecipeDTO dto = new RecipeDTO();
@@ -124,7 +134,7 @@ class RecipeControllerTest {
 
         //then
         mockMvc.perform(multipart("/recipe/").file(multipartFile)
-                        .param("addImage",""))
+                        .param("addImage", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/recipeform"))
                 .andExpect(model().attributeExists("recipe"))

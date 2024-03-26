@@ -2,6 +2,7 @@ package learning.spring.recipe.service;
 
 import jakarta.transaction.Transactional;
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.mappers.RecipeMapper;
 import learning.spring.recipe.model.IngredientDescription;
 import learning.spring.recipe.model.Recipe;
@@ -32,16 +33,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe findById(Long id) {
-
-        var recipeOptional = recipeRepository.findById(id);
-
-        if (recipeOptional.isEmpty()) {
+        return recipeRepository.findById(id).orElseThrow(() -> {
             String message = "Recipe with id=%d Not Found".formatted(id);
             log.error(message);
-            throw new RuntimeException(message);
-        }
-
-        return recipeOptional.get();
+            return new NotFoundException(message);
+        });
     }
 
     @Override

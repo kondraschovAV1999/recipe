@@ -94,7 +94,6 @@ class IngredientServiceImplTest {
         verify(ingredientDescriptionRepository).findByIdAndRecipeId(
                 anyLong(), anyLong());
     }
-
     @Test
     void testSaveIngredientDto() {
         //given

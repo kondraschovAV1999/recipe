@@ -2,6 +2,7 @@ package learning.spring.recipe.service;
 
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +59,14 @@ class RecipeServiceImplTest {
 
         assertNotNull(recipeReturned, "Null recipe returned");
         verify(recipeRepository).findById(anyLong());
+    }
+
+    @Test
+    void getRecipeByIdTestNotFound() {
+
+        when(recipeRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class,
+                () -> recipeService.findById(1L));
     }
 
     @Test
