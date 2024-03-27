@@ -24,6 +24,7 @@ class RecipeServiceImplTest {
     RecipeServiceImpl recipeService;
     @Mock
     RecipeRepository recipeRepository;
+
     @Mock
     IngredientService ingredientService;
 
@@ -69,6 +70,7 @@ class RecipeServiceImplTest {
                 () -> recipeService.findById(1L));
     }
 
+
     @Test
     void testDeleteById() {
         //given
@@ -101,6 +103,12 @@ class RecipeServiceImplTest {
         //then
         assertEquals(0, recipeDto.getIngredients().size());
         assertNull(ingredientDescriptionDto.getRecipeId());
+    }
+
+    @Test
+    void testDeleteIngredientNotFoundRecipe() {
+        assertThrows(NotFoundException.class,
+                () -> recipeService.deleteIngredient(0, null));
     }
 
 }

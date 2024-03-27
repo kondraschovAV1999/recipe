@@ -1,6 +1,7 @@
 package learning.spring.recipe.service;
 
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.repositories.RecipeRepository;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,6 +52,13 @@ class ImageServiceImplTest {
         verify(recipeRepository).save(captor.capture());
         Recipe savedRecipe = captor.getValue();
         assertEquals(multipartFile.getBytes().length, savedRecipe.getImage().length);
+    }
+
+    @Test
+    void saveImageFileWithNullRecipe() {
+        assertThrows(NotFoundException.class, () ->
+                imageService.saveImageFile(1L, null));
+
     }
 
     @Test

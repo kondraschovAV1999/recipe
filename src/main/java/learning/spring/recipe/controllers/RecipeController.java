@@ -2,18 +2,15 @@ package learning.spring.recipe.controllers;
 
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
-import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.service.ImageService;
 import learning.spring.recipe.service.RecipeService;
 import learning.spring.recipe.service.UnitOfMeasureService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 
@@ -92,16 +89,6 @@ public class RecipeController {
         imageService.addImageFile(dto, file);
         model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
         return "recipe/recipeform";
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound(Exception e) {
-        log.error("Handling not found exception");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("404error");
-        modelAndView.addObject("exception", e);
-        return modelAndView;
     }
 
 }

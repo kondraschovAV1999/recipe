@@ -1,6 +1,7 @@
 package learning.spring.recipe.controllers;
 
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.service.ImageService;
 import learning.spring.recipe.service.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -26,6 +29,7 @@ class ImageControllerTest {
 
     @Mock
     private ImageService imageService;
+
     @Mock
     private RecipeService recipeService;
     @InjectMocks
@@ -34,7 +38,10 @@ class ImageControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(controller)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -72,6 +79,30 @@ class ImageControllerTest {
     }
 
     @Test
+    void handleImagePostNotFoundRecipe() throws Exception {
+
+        //given
+        Long recipeId = 1L;
+        MockMultipartFile multipartFile =
+                new MockMultipartFile(
+                        "imagefile",
+                        "testing.txt",
+                        "text/plain",
+                        "Spring Framework Guru".getBytes());
+
+        //when
+        doThrow(NotFoundException.class).when(imageService)
+                .saveImageFile(anyLong(), any());
+
+
+        mockMvc.perform(multipart("/recipe/%d/image"
+                        .formatted(recipeId)).file(multipartFile))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+
+    }
+
+    @Test
     void renderImageFromDB() throws Exception {
         // given
         Long id = 1L;
@@ -90,5 +121,17 @@ class ImageControllerTest {
 
         byte[] responseBytes = response.getContentAsByteArray();
         assertEquals(s.getBytes().length, responseBytes.length);
+    }
+
+    @Test
+    void renderImageFromDBNotFoundRecipe() throws Exception {
+
+        when(recipeService.findDtoById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(
+                        get("/recipe/%d/recipeimage".formatted(1L)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
     }
 }

@@ -1,6 +1,9 @@
 package learning.spring.recipe.service;
 
+import learning.spring.recipe.dto.IngredientDTO;
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
+import learning.spring.recipe.dto.UnitOfMeasureDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.mappers.*;
 import learning.spring.recipe.model.Ingredient;
 import learning.spring.recipe.model.IngredientDescription;
@@ -19,8 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +41,11 @@ class IngredientServiceImplTest {
     private UnitOfMeasureRepository unitOfMeasureRepository;
 
     private IngredientService ingredientService;
+
+    private final Long ingredientDescId = 1L;
+    private final Long ingredientId = 1L;
+    private final String ingredientDesc = "description";
+    private final Long uomId = 1L;
 
     @BeforeEach
     void setUp() {
@@ -94,37 +101,30 @@ class IngredientServiceImplTest {
         verify(ingredientDescriptionRepository).findByIdAndRecipeId(
                 anyLong(), anyLong());
     }
+
+    @Test
+    void findByRecipeIdAndRecipeIdNotFoundRecipe() {
+        assertThrows(NotFoundException.class, () ->
+                ingredientService.findByRecipeIdAndIngredientId(1L, 1L));
+    }
+
     @Test
     void testSaveIngredientDto() {
         //given
-        Long ingredientDescId = 3L;
         Long recipeId = 2L;
-        Long ingredientId = 1L;
-        Long uomId = 2L;
 
-        IngredientDescription ingredientDescription = new IngredientDescription();
-        ingredientDescription.setId(ingredientDescId);
+        IngredientDescription ingredientDescription = createIngredientDesc(ingredientDescId);
 
         Recipe recipe = new Recipe();
         recipe.setId(recipeId);
         recipe.addIngredientDescription(ingredientDescription);
 
-        Ingredient ingredient = new Ingredient();
-        ingredient.setId(ingredientId);
-        ingredient.setDescription("test description");
-        ingredientDescription.setIngredient(ingredient);
-
-        UnitOfMeasure uom = new UnitOfMeasure();
-        uom.setId(uomId);
-        ingredientDescription.setUnitOfMeasure(uom);
-
-
         when(ingredientDescriptionRepository.findById(anyLong())).thenReturn(
                 Optional.of(ingredientDescription));
         when(ingredientRepository.findByDescription(anyString())).thenReturn(
-                Optional.of(ingredient));
+                Optional.of(ingredientDescription.getIngredient()));
         when(unitOfMeasureRepository.findById(anyLong())).thenReturn(
-                Optional.of(uom));
+                Optional.of(ingredientDescription.getUnitOfMeasure()));
         when(ingredientDescriptionRepository.save(any())).thenReturn(
                 ingredientDescription);
         when(recipeRepository.findById(anyLong())).thenReturn(
@@ -144,6 +144,12 @@ class IngredientServiceImplTest {
         verify(unitOfMeasureRepository).findById(anyLong());
         verify(ingredientDescriptionRepository).save(any(IngredientDescription.class));
         verify(recipeRepository).findById(anyLong());
+    }
+
+    @Test
+    void testSaveIngredientDtoWithNullRecipeId() {
+        assertThrows(NotFoundException.class, () ->
+                ingredientService.saveIngredientDto(new IngredientDescriptionDTO()));
     }
 
     @Test
@@ -174,5 +180,168 @@ class IngredientServiceImplTest {
         verify(recipeRepository).findById(anyLong());
         verify(recipeRepository).save(any(Recipe.class));
         verify(ingredientDescriptionRepository).deleteById(anyLong());
+    }
+
+    @Test
+    void testDeleteByIdAndRecipeIdWithNullRecipeId() {
+        assertThrows(NotFoundException.class, () ->
+                ingredientService.deleteByIdAndRecipeId(1L, 1L));
+    }
+
+    @Test
+    void testFindById() {
+        //given
+        Long id = 1L;
+        IngredientDescription ingredientDescription = new IngredientDescription();
+        ingredientDescription.setId(id);
+
+        when(ingredientDescriptionRepository.findById(anyLong()))
+                .thenReturn(Optional.of(ingredientDescription));
+
+        //when
+        var returnedIngredientDesc = ingredientService.findById(id);
+
+        //then
+        assertNotNull(returnedIngredientDesc);
+        assertEquals(id, returnedIngredientDesc.getId());
+        verify(ingredientDescriptionRepository).findById(anyLong());
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+        assertThrows(NotFoundException.class,
+                () -> ingredientService.findById(1));
+    }
+
+    @Test
+    void testCreateNewIngredientDescFromForm() {
+        //given
+        IngredientDescriptionDTO dto = createIngredientDescDto(null);
+        IngredientDescription ingredientDescription = createIngredientDesc(null);
+
+        when(ingredientRepository.findByDescription(anyString()))
+                .thenReturn(Optional.of(ingredientDescription.getIngredient()));
+
+        when(unitOfMeasureRepository.findById(anyLong()))
+                .thenReturn(Optional.of(ingredientDescription.getUnitOfMeasure()));
+
+        //when
+        var returnedIngredientDesc = ingredientService
+                .createIngredientDescFromForm(dto);
+
+        //then
+        assertNotNull(returnedIngredientDesc);
+        assertNotNull(returnedIngredientDesc.getIngredient());
+        assertNotNull(returnedIngredientDesc.getUnitOfMeasure());
+        assertEquals(ingredientId, returnedIngredientDesc.getIngredient().getId());
+        assertEquals(ingredientDesc,
+                returnedIngredientDesc.getIngredient().getDescription());
+        assertEquals(uomId, returnedIngredientDesc.getUnitOfMeasure().getId());
+        verify(ingredientRepository).findByDescription(anyString());
+        verify(unitOfMeasureRepository).findById(anyLong());
+    }
+
+    @Test
+    void testCreateNewIngredientDescFromFormUomNotFound() {
+        //given
+        IngredientDescriptionDTO dto = createIngredientDescDto(null);
+        IngredientDescription ingredientDescription = createIngredientDesc(null);
+
+        //when
+        when(ingredientRepository.findByDescription(anyString()))
+                .thenReturn(Optional.of(ingredientDescription.getIngredient()));
+
+        when(unitOfMeasureRepository.findById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        //then
+        assertThrows(NotFoundException.class,
+                () -> ingredientService.createIngredientDescFromForm(dto));
+    }
+
+    @Test
+    void testCreateIngredientDescFromFormUpdate() {
+        //given
+        IngredientDescriptionDTO dto = createIngredientDescDto(ingredientDescId);
+        IngredientDescription ingredientDescription = createIngredientDesc(ingredientDescId);
+
+        when(ingredientDescriptionRepository.findById(anyLong()))
+                .thenReturn(Optional.of(ingredientDescription));
+
+        when(ingredientRepository.findByDescription(anyString()))
+                .thenReturn(Optional.of(ingredientDescription.getIngredient()));
+
+        when(unitOfMeasureRepository.findById(anyLong()))
+                .thenReturn(Optional.of(ingredientDescription.getUnitOfMeasure()));
+
+        //when
+        var returnedIngredientDesc = ingredientService
+                .createIngredientDescFromForm(dto);
+
+        //then
+        assertNotNull(returnedIngredientDesc);
+        assertNotNull(returnedIngredientDesc.getIngredient());
+        assertNotNull(returnedIngredientDesc.getUnitOfMeasure());
+        assertEquals(ingredientId, returnedIngredientDesc.getIngredient().getId());
+        assertEquals(ingredientDesc,
+                returnedIngredientDesc.getIngredient().getDescription());
+        assertEquals(uomId, returnedIngredientDesc.getUnitOfMeasure().getId());
+        assertEquals(ingredientDescId, returnedIngredientDesc.getId());
+        verify(ingredientRepository).findByDescription(anyString());
+        verify(unitOfMeasureRepository).findById(anyLong());
+        verify(ingredientDescriptionRepository).findById(anyLong());
+    }
+
+    @Test
+    void testCreateIngredientDescFromFormUpdateUomNotFound() {
+        //given
+        IngredientDescriptionDTO dto = createIngredientDescDto(ingredientDescId);
+        IngredientDescription ingredientDescription = createIngredientDesc(ingredientDescId);
+
+        //when
+        when(ingredientDescriptionRepository.findById(anyLong()))
+                .thenReturn(Optional.of(ingredientDescription));
+
+        when(ingredientRepository.findByDescription(anyString()))
+                .thenReturn(Optional.of(ingredientDescription.getIngredient()));
+
+        when(unitOfMeasureRepository.findById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        //then
+        assertThrows(NotFoundException.class,
+                () -> ingredientService.createIngredientDescFromForm(dto));
+    }
+
+    private IngredientDescription createIngredientDesc(Long ingredientDescId) {
+        IngredientDescription ingredientDescription = new IngredientDescription();
+        ingredientDescription.setId(ingredientDescId);
+
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId(ingredientId);
+        ingredient.setDescription(ingredientDesc);
+        ingredientDescription.setIngredient(ingredient);
+
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setId(uomId);
+        ingredientDescription.setUnitOfMeasure(uom);
+
+        return ingredientDescription;
+    }
+
+    private IngredientDescriptionDTO createIngredientDescDto(Long ingredientDescId) {
+        IngredientDescriptionDTO dto = new IngredientDescriptionDTO();
+        dto.setId(ingredientDescId);
+
+        IngredientDTO ingredientDto = new IngredientDTO();
+        ingredientDto.setDescription(ingredientDesc);
+        ingredientDto.setId(ingredientId);
+        dto.setIngredient(ingredientDto);
+
+        UnitOfMeasureDTO uomDto = new UnitOfMeasureDTO();
+        uomDto.setId(uomId);
+        dto.setUom(uomDto);
+
+        return dto;
     }
 }

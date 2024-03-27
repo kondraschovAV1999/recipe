@@ -72,9 +72,14 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public void deleteIngredient(int index, RecipeDTO recipe) {
+        log.debug("Deleting ingredient from recipe");
 
         if (recipe != null) recipe.removeIngredientByIndex(index);
-        else log.warn("Trying to delete ingredient from recipe that doesnt exist");
+        else {
+            String message = "Recipe for ingredientDesc with id=%d Not Found".formatted(index);
+            log.error(message);
+            throw new NotFoundException(message);
+        }
 
     }
 }

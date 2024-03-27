@@ -2,6 +2,7 @@ package learning.spring.recipe.service;
 
 import jakarta.transaction.Transactional;
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.model.Recipe;
 import learning.spring.recipe.repositories.RecipeRepository;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class ImageServiceImpl implements ImageService {
                     () -> {
                         String message = "Recipe with id=%d Not Found".formatted(recipeId);
                         log.error(message);
-                        return new RuntimeException(message);
+                        return new NotFoundException(message);
                     }
             );
             recipe.setImage(file.getBytes());

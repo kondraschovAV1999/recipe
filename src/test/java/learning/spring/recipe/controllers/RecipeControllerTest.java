@@ -39,7 +39,10 @@ class RecipeControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(recipeController)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -106,6 +109,18 @@ class RecipeControllerTest {
                 .andExpect(view().name("recipe/recipeform"))
                 .andExpect(model().attributeExists("uomList"))
                 .andExpect(model().attributeExists("recipe"));
+    }
+
+    @Test
+    void testGetUpdateViewNotFoundDto() throws Exception {
+
+        when(recipeService.findDtoById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/%d/update".formatted(1)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+
     }
 
     @Test

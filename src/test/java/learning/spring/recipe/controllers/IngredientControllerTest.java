@@ -3,6 +3,7 @@ package learning.spring.recipe.controllers;
 
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
 import learning.spring.recipe.dto.RecipeDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.service.IngredientService;
 import learning.spring.recipe.service.RecipeService;
 import learning.spring.recipe.service.UnitOfMeasureService;
@@ -20,14 +21,14 @@ import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class IngredientControllerTest {
+
 
     @Mock
     private RecipeService recipeService;
@@ -44,7 +45,10 @@ public class IngredientControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(controller)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -62,6 +66,16 @@ public class IngredientControllerTest {
 
         //then
         verify(recipeService).findDtoById(anyLong());
+    }
+
+    @Test
+    void testListIngredientsNotFoundRecipe() throws Exception {
+        when(recipeService.findDtoById(anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/%d/ingredients".formatted(1L)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
     }
 
     @Test
@@ -83,6 +97,17 @@ public class IngredientControllerTest {
     }
 
     @Test
+    void testShowIngredientNotFound() throws Exception {
+        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get(
+                        "/recipe/%d/ingredient/%d/show".formatted(1L, 1L)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+    }
+
+    @Test
     void testUpdateIngredient() throws Exception {
         //given
         IngredientDescriptionDTO dto = new IngredientDescriptionDTO();
@@ -98,6 +123,16 @@ public class IngredientControllerTest {
                 .andExpect(view().name("recipe/ingredient/ingredientform"))
                 .andExpect(model().attributeExists("ingredientDesc"))
                 .andExpect(model().attributeExists("uomList"));
+    }
+
+    @Test
+    void testUpdateIngredientNotFound() throws Exception {
+        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong()))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/%d/ingredient/%d/update".formatted(1, 2)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
     }
 
     @Test
@@ -157,5 +192,17 @@ public class IngredientControllerTest {
                         .formatted(recipeId)));
 
         verify(ingredientService).deleteByIdAndRecipeId(anyLong(), anyLong());
+    }
+
+    @Test
+    void testDeleteIngredientNotFoundRecipe() throws Exception {
+
+        doThrow(NotFoundException.class).when(ingredientService)
+                .deleteByIdAndRecipeId(anyLong(), anyLong());
+
+        mockMvc.perform(get("/recipe/%d/ingredient/%d/delete"
+                        .formatted(1L, 1L)))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
     }
 }

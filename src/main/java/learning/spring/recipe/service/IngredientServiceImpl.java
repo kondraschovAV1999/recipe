@@ -2,6 +2,7 @@ package learning.spring.recipe.service;
 
 import jakarta.transaction.Transactional;
 import learning.spring.recipe.dto.IngredientDescriptionDTO;
+import learning.spring.recipe.exceptions.NotFoundException;
 import learning.spring.recipe.mappers.IngredientDescriptionMapper;
 import learning.spring.recipe.model.IngredientDescription;
 import learning.spring.recipe.model.Recipe;
@@ -30,7 +31,7 @@ public class IngredientServiceImpl implements IngredientService {
                     String message = "IngredientDesc Not Found By id:%d"
                             .formatted(id);
                     log.error(message);
-                    return new RuntimeException(message);
+                    return new NotFoundException(message);
                 });
     }
 
@@ -43,7 +44,7 @@ public class IngredientServiceImpl implements IngredientService {
                             String message = "Ingredient Not Found by ingredientId:%d and recipeId:%d"
                                     .formatted(ingredientId, recipeId);
                             log.error(message);
-                            return new RuntimeException(message);
+                            return new NotFoundException(message);
                         }));
     }
 
@@ -54,7 +55,7 @@ public class IngredientServiceImpl implements IngredientService {
         if (dto.getRecipeId() == null) {
             log.error("Trying to save ingredientDescription but recipeId is null, id=%d"
                     .formatted(dto.getId()));
-            throw new RuntimeException("Trying to update ingredientDescription but recipeId is null");
+            throw new NotFoundException("Trying to update ingredientDescription but recipeId is null");
         }
 
         return ingredientDescriptionMapper.toDto(ingredientDescriptionRepository.
@@ -74,7 +75,7 @@ public class IngredientServiceImpl implements IngredientService {
                             String message = "IngredientDescription NOT FOUND BY id=%d (recipeId=%d)"
                                     .formatted(dto.getId(), dto.getRecipeId());
                             log.error(message);
-                            return new RuntimeException(message);
+                            return new NotFoundException(message);
                         });
 
         ingredientDescription.setIngredient(
@@ -86,10 +87,10 @@ public class IngredientServiceImpl implements IngredientService {
         ingredientDescription.setUnitOfMeasure(
                 unitOfMeasureRepository.findById(dto.getUom().getId())
                         .orElseThrow(() -> {
-                            String message = "UOM with desc:%s and id:%d NOT FOUND"
+                            String message = "UOM with desc:%s and id:%d Not Found"
                                     .formatted(dto.getUom().getDescription(), dto.getUom().getId());
                             log.error(message);
-                            return new RuntimeException(message);
+                            return new NotFoundException(message);
                         }));
         ingredientDescription.setAmount(ingredientDescFromDto.getAmount());
         ingredientDescription.setRecipe(ingredientDescFromDto.getRecipe());
@@ -110,7 +111,7 @@ public class IngredientServiceImpl implements IngredientService {
                 () -> {
                     String message = "Recipe with id=%d Not Found".formatted(recipeId);
                     log.error(message);
-                    return new RuntimeException(message);
+                    return new NotFoundException(message);
                 }
         );
 
